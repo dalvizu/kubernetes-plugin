@@ -222,7 +222,10 @@ public class KubernetesSlave extends AbstractCloudSlave {
     @Override
     protected void _terminate(TaskListener listener) throws IOException, InterruptedException {
         LOGGER.log(Level.INFO, "Terminating Kubernetes instance for agent {0}", name);
-        
+        for (RuntimeException terminationTrace : toComputer().getTerminatedBy()) {
+            LOGGER.log(Level.FINE, String.format("%s termination trace", name), terminationTrace);
+        }
+
         KubernetesCloud cloud;
         try {
             cloud = getKubernetesCloud();
