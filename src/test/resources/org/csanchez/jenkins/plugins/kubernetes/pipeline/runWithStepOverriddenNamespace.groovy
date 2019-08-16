@@ -8,7 +8,7 @@ podTemplate(
 
     node(POD_LABEL) {
         container(name: 'jnlp') {
-            sh "cat /var/run/secrets/kubernetes.io/serviceaccount/namespace"
+            sh 'cat /var/run/secrets/kubernetes.io/serviceaccount/namespace'
         }
     }
 }

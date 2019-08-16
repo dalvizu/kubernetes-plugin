@@ -1,5 +1,9 @@
-jenkins-kubernetes-plugin
+Kubernetes plugin for Jenkins
 =========================
+
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/kubernetes.svg)](https://plugins.jenkins.io/kubernetes)
+[![GitHub release](https://img.shields.io/github/release/jenkinsci/kubernetes-plugin.svg?label=release)](https://github.com/jenkinsci/kubernetes-plugin/releases/latest)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/kubernetes.svg?color=blue)](https://plugins.jenkins.io/kubernetes)
 
 Jenkins plugin to run dynamic agents in a Kubernetes cluster.
 
@@ -42,6 +46,8 @@ use this cloud configuration you will need to add it in the jobs folder's config
 # Pipeline support
 
 Nodes can be defined in a pipeline and then used, however, default execution always goes to the jnlp container.  You will need to specify the container you want to execute your task in.
+
+*Please note the `Pod_LABEL` is a new feature to automatically label the generated pod in versions `1.17.0` or higher, older versions of the Kubernetes Plugin will need to manually label the podTemplate*
 
 This will run in jnlp container
 ```groovy
@@ -352,7 +358,7 @@ podTemplate(cloud: 'kubernetes', containers: [
         ttyEnabled: true,
         privileged: false,
         alwaysPullImage: false,
-        workingDir: '/home/jenkins',
+        workingDir: '/home/jenkins/agent',
         resourceRequestCpu: '50m',
         resourceLimitCpu: '100m',
         resourceRequestMemory: '100Mi',
@@ -741,6 +747,14 @@ Get the url to connect to with
 
     minikube service jenkins --namespace kubernetes-plugin --url
 
+## Running with a remote Kubernetes Cloud in AWS EKS
+
+EKS enforces authentication to the cluster through [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html). The token expires after 15 minutes
+so the kubernetes client cache needs to be set to something below this by setting a [java argument](https://support.cloudbees.com/hc/en-us/articles/209715698-How-to-add-Java-arguments-to-Jenkins-), like so:
+```
+JAVA_ARGS="-Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60"
+```
+
 ## Running in Google Container Engine GKE
 
 Assuming you created a Kubernetes cluster named `jenkins` this is how to run both Jenkins and agents there.
@@ -795,7 +809,7 @@ Set `Container Cap` to a reasonable number for tests, i.e. 3.
 Add an image with
 
 * Docker image: `jenkins/jnlp-slave`
-* Jenkins agent root directory: `/home/jenkins`
+* Jenkins agent root directory: `/home/jenkins/agent`
 
 ![image](configuration.png)
 

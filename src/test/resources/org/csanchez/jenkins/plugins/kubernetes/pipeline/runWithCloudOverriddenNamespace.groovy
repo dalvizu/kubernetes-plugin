@@ -4,7 +4,7 @@ podTemplate(volumes: [emptyDirVolume(mountPath: '/my-mount')], containers: [
 
     node(POD_LABEL) {
         container(name: 'jnlp') {
-            sh "cat /var/run/secrets/kubernetes.io/serviceaccount/namespace"
+            sh 'cat /var/run/secrets/kubernetes.io/serviceaccount/namespace'
         }
     }
 }
